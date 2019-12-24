@@ -1,3 +1,5 @@
+cmake_minimum_required(VERSION 3.1.0)
+
 project(hotspot-perfparser)
 
 find_package(Qt6 COMPONENTS Core REQUIRED)
