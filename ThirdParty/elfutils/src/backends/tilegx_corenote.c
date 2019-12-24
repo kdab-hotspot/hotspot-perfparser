@@ -1,5 +1,5 @@
-/* i386 specific auxv handling.
-   Copyright (C) 2007 Red Hat, Inc.
+/* TILE-Gx specific core note handling.
+   Copyright (C) 2012 Tilera Corporation
    This file is part of elfutils.
 
    This file is free software; you can redistribute it and/or modify
@@ -26,30 +26,39 @@
    the GNU Lesser General Public License along with this program.  If
    not, see <http://www.gnu.org/licenses/>.  */
 
+
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
 
-#define BACKEND i386_
+#include <elf.h>
+#include <inttypes.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <sys/time.h>
+
+#define BACKEND	tilegx_
 #include "libebl_CPU.h"
 
-int
-EBLHOOK(auxv_info) (GElf_Xword a_type, const char **name, const char **format)
-{
-  if (a_type != AT_HWCAP)
-    return 0;
+static const Ebl_Register_Location prstatus_regs[] =
+  {
+    { .offset = 0, .regno = 0, .count = 56, .bits = 64 }, /* r0-r55 */
+    { .offset = 56 * 8, .regno = 64, .count = 1, .bits = 64 } /* pc */
+  };
+#define PRSTATUS_REGS_SIZE	(57 * 8)
 
-  *name = "HWCAP";
-  *format = "b"
-    "fpu\0" "vme\0" "de\0" "pse\0" "tsc\0" "msr\0" "pae\0" "mce\0"
-    "cx8\0" "apic\0" "10\0" "sep\0" "mtrr\0" "pge\0" "mca\0" "cmov\0"
-    "pat\0" "pse36\0" "pn\0" "clflush\0" "20\0" "dts\0" "acpi\0" "mmx\0"
-    "fxsr\0" "sse\0" "sse2\0" "ss\0" "ht\0" "tm\0" "ia64\0" "pbe\0" "\0";
-  return 1;
-}
+#define ULONG			uint64_t
+#define ALIGN_ULONG		8
+#define TYPE_ULONG		ELF_T_XWORD
+#define TYPE_LONG		ELF_T_SXWORD
+#define PID_T			int32_t
+#define	UID_T			uint32_t
+#define	GID_T			uint32_t
+#define ALIGN_PID_T		4
+#define ALIGN_UID_T		4
+#define ALIGN_GID_T		4
+#define TYPE_PID_T		ELF_T_SWORD
+#define TYPE_UID_T		ELF_T_WORD
+#define TYPE_GID_T		ELF_T_WORD
 
-int
-x86_64_auxv_info(GElf_Xword a_type, const char **name, const char **format)
-{
-  return i386_auxv_info(a_type, name, format);
-}
+#include "linux-core-note.c"
