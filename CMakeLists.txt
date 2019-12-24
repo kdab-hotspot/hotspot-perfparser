@@ -38,54 +38,28 @@ set(ELFUTILS_INCLUDE_DIRS
 	ThirdParty/elfutils/src/elf
 	ThirdParty/elfutils/src/backends)
 
-file(GLOB ELF_SRCS "ThirdParty/elfutils/src/elf/*.c")
+file(GLOB ELFUTILS_SRCS
+	"ThirdParty/elfutils/src/common/tdestroy.c"
+	"ThirdParty/elfutils/src/common/strchrnul.c"
+	"ThirdParty/elfutils/src/elf/*.c"
+	"ThirdParty/elfutils/src/dw/*.c"
+	"ThirdParty/elfutils/src/dwfl/*.c"
+	"ThirdParty/elfutils/src/dwelf/*.c"
+	"ThirdParty/elfutils/src/ebl/*.c"
+	"ThirdParty/elfutils/src/backends/*.c"
+	"ThirdParty/elfutils/src/cpu/*.c")
 
-add_library(elf STATIC ${ELF_SRCS})
-target_include_directories(elf PRIVATE ${ELFUTILS_INCLUDE_DIRS})
-target_compile_definitions(elf PRIVATE _GNU_SOURCE HAVE_CONFIG_H LOCALEDIR="" _FORTIFY_SOURCE=2)
-target_link_libraries(elf ${Intl_LIBRARY})
-
-file(GLOB DW_SRCS "ThirdParty/elfutils/src/dw/*.c")
-
-add_library(dw STATIC ${DW_SRCS})
-target_include_directories(dw PRIVATE ${ELFUTILS_INCLUDE_DIRS})
-target_compile_definitions(dw PRIVATE _GNU_SOURCE HAVE_CONFIG_H LOCALEDIR="" _FORTIFY_SOURCE=2)
-target_link_libraries(dw ${Intl_LIBRARY})
-
-file(GLOB DWFL_SRCS "ThirdParty/elfutils/src/dwfl/*.c")
-
-add_library(dwfl STATIC ${DWFL_SRCS})
-target_include_directories(dwfl PRIVATE ${ELFUTILS_INCLUDE_DIRS})
-target_compile_definitions(dwfl PRIVATE _GNU_SOURCE HAVE_CONFIG_H LOCALEDIR="" _FORTIFY_SOURCE=2)
-target_link_libraries(dwfl ${Intl_LIBRARY} ${ARGP_LIBRARIES} ${ZLIB_LIBRARIES} ${LIBLZMA_LIBRARIES} ${BZIP2_LIBRARIES})
-
-file(GLOB DWELF_SRCS "ThirdParty/elfutils/src/dwelf/*.c")
-
-add_library(dwelf STATIC ${DWELF_SRCS})
-target_include_directories(dwelf PRIVATE ${ELFUTILS_INCLUDE_DIRS})
-target_compile_definitions(dwelf PRIVATE _GNU_SOURCE HAVE_CONFIG_H LOCALEDIR="" _FORTIFY_SOURCE=2)
-target_link_libraries(dwelf ${Intl_LIBRARY})
-
-file(GLOB EBL_SRCS "ThirdParty/elfutils/src/ebl/*.c")
-
-add_library(ebl STATIC ${EBL_SRCS})
-target_include_directories(ebl PRIVATE ${ELFUTILS_INCLUDE_DIRS})
-target_compile_definitions(ebl PRIVATE _GNU_SOURCE HAVE_CONFIG_H LOCALEDIR="" _FORTIFY_SOURCE=2)
-target_link_libraries(ebl ${Intl_LIBRARY})
-
-file(GLOB BACKENDS_SRCS "ThirdParty/elfutils/src/backends/*.c")
-
-add_library(backends STATIC ${BACKENDS_SRCS})
-target_include_directories(backends PRIVATE ${ELFUTILS_INCLUDE_DIRS})
-target_compile_definitions(backends PRIVATE _GNU_SOURCE HAVE_CONFIG_H LOCALEDIR="" _FORTIFY_SOURCE=2 __BEGIN_DECLS=; __END_DECLS=;)
-target_link_libraries(backends ${Intl_LIBRARY})
+add_library(elfutils STATIC ${ELFUTILS_SRCS})
+target_include_directories(elfutils PRIVATE ${ELFUTILS_INCLUDE_DIRS})
+target_compile_definitions(elfutils PRIVATE _GNU_SOURCE HAVE_CONFIG_H LOCALEDIR="" _FORTIFY_SOURCE=2 __BEGIN_DECLS=; __END_DECLS=;)
+target_link_libraries(elfutils ${Intl_LIBRARY} ${ARGP_LIBRARIES} ${ZLIB_LIBRARIES} ${LIBLZMA_LIBRARIES} ${BZIP2_LIBRARIES})
 
 file(GLOB SRCS "src/*.cpp" "include/*.h")
 
 add_executable(${PROJECT_NAME} ${SRCS})
 target_include_directories(${PROJECT_NAME} PRIVATE include)
 target_include_directories(${PROJECT_NAME} PRIVATE ThirdParty/elfutils/include)
-target_link_libraries(${PROJECT_NAME} Qt6::Core Qt6::Network elf dw dwfl dwelf ebl backends)
+target_link_libraries(${PROJECT_NAME} Qt6::Core Qt6::Network elfutils)
 
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin)
 
