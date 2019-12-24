@@ -143,7 +143,7 @@ static bool memoryRead(Dwfl *, Dwarf_Addr addr, Dwarf_Word *result, void *arg)
 
     /* Check overflow. */
     if (addr + sizeof(Dwarf_Word) < addr) {
-        qDebug() << "Invalid memory read requested by dwfl" << hex << addr;
+        qDebug() << "Invalid memory read requested by dwfl" << Qt::hex << addr;
         ui->firstGuessedFrame = ui->frames.length();
         return false;
     }
@@ -159,7 +159,7 @@ static bool memoryRead(Dwfl *, Dwarf_Addr addr, Dwarf_Word *result, void *arg)
         // not stack, try reading from ELF
         if (ui->unwind->ipIsInKernelSpace(addr)) {
             // DWARF unwinding is not done for the kernel
-            qWarning() << "DWARF unwind tried to access kernel space" << hex << addr;
+            qWarning() << "DWARF unwind tried to access kernel space" << Qt::hex << addr;
             return false;
         }
         if (!accessDsoMem(ui, addr, result, wordWidth)) {
@@ -553,7 +553,7 @@ Dwfl_Module *PerfSymbolTable::module(quint64 addr, const PerfElfMap::ElfInfo &el
         const auto base = m_elfs.findElf(elf.baseAddr);
         if (base.addr == elf.baseAddr && !base.pgoff && elf.originalPath == base.originalPath)
             return module(addr, base);
-        qWarning() << "stale base mapping referenced:" << elf << base << dec << m_pid << hex << addr;
+        qWarning() << "stale base mapping referenced:" << elf << base << Qt::dec << m_pid << Qt::hex << addr;
     }
 
     Dwfl_Module *mod = dwfl_addrmodule(m_dwfl, addr);

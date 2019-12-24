@@ -2,13 +2,18 @@ cmake_minimum_required(VERSION 3.1.0)
 
 project(hotspot-perfparser)
 
-find_package(Qt6 COMPONENTS Core REQUIRED)
+find_package(Qt6 COMPONENTS Network Core REQUIRED)
 
-file(GLOB SRCS "src/*.cpp")
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
+
+file(GLOB SRCS "src/*.cpp" "include/*.h")
 
 add_executable(${PROJECT_NAME} ${SRCS})
-
-target_link_libraries(${PROJECT_NAME} Qt6::Core)
+target_include_directories(${PROJECT_NAME} PRIVATE include)
+target_include_directories(${PROJECT_NAME} PRIVATE ThirdParty/elfutils/include)
+target_link_libraries(${PROJECT_NAME} Qt6::Core Qt6::Network)
 
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin)
 
