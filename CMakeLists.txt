@@ -2,6 +2,16 @@ cmake_minimum_required(VERSION 3.1.0)
 
 project(hotspot-perfparser)
 
+if (UNIX)
+# Use $ORIGIN or @loader_path, which allow to pick up
+# dependencies relative to the executable folder
+if (APPLE)
+set(CMAKE_INSTALL_RPATH "@loader_path" "@loader_path/lib" "@loader_path/../lib")
+else()
+set(CMAKE_INSTALL_RPATH "$ORIGIN" "$ORIGIN/lib" "$ORIGIN/../lib")
+endif()
+endif()
+
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
 
 if (APPLE)
