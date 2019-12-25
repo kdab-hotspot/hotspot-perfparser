@@ -20,11 +20,6 @@ set(Intl_LIBRARY /usr/local/opt/gettext/lib/libintl.dylib)
 endif()
 find_package(Intl REQUIRED)
 
-if (APPLE)
-set(Argp_ROOT_DIR /usr/local/opt/argp-standalone)
-endif()
-find_package(argp REQUIRED)
-
 find_package(ZLIB REQUIRED)
 find_package(LibLZMA REQUIRED)
 find_package(BZip2 REQUIRED)
@@ -36,7 +31,7 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
 set(ELFUTILS_INCLUDE_DIRS
-	${Intl_INCLUDE_DIR} ${ARGP_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIRS} ${LIBLZMA_INCLUDE_DIRS} ${BZIP2_INCLUDE_DIRS}
+	${Intl_INCLUDE_DIR} ${ZLIB_INCLUDE_DIRS} ${LIBLZMA_INCLUDE_DIRS} ${BZIP2_INCLUDE_DIRS}
 	ThirdParty/elfutils/src/common
 	ThirdParty/elfutils/include
 	ThirdParty/elfutils/src/asm
@@ -62,7 +57,7 @@ file(GLOB ELFUTILS_SRCS
 add_library(elfutils STATIC ${ELFUTILS_SRCS})
 target_include_directories(elfutils PRIVATE ${ELFUTILS_INCLUDE_DIRS})
 target_compile_definitions(elfutils PRIVATE _GNU_SOURCE HAVE_CONFIG_H LOCALEDIR="" _FORTIFY_SOURCE=2 __BEGIN_DECLS=; __END_DECLS=;)
-target_link_libraries(elfutils ${Intl_LIBRARY} ${ARGP_LIBRARIES} ${ZLIB_LIBRARIES} ${LIBLZMA_LIBRARIES} ${BZIP2_LIBRARIES})
+target_link_libraries(elfutils ${Intl_LIBRARY} ${ZLIB_LIBRARIES} ${LIBLZMA_LIBRARIES} ${BZIP2_LIBRARIES})
 
 file(GLOB SRCS "src/*.cpp" "include/*.h")
 
